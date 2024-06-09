@@ -4,11 +4,22 @@
  */
 package com.mycompany.practicaempleado20240611;
 
+import Entidades.Empleado;
+import Entidades.Vacacion;
+import Utilerias.OpcionesCRUD;
+import accesoadatos.VacacionDAL;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author MINEDUCYT
  */
 public class FrmGestionVacacionesLec extends javax.swing.JFrame {
+
+    private OpcionesCRUD opcionCRUD;
 
     /**
      * Creates new form FrmGestionVacacionesLec
@@ -27,20 +38,27 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTxtNombre = new javax.swing.JTextField();
+        jBtnBuscar = new javax.swing.JButton();
+        jScrollEmpleado = new javax.swing.JScrollPane();
+        jTableEmpleados = new javax.swing.JTable();
+        jBtnEditar = new javax.swing.JButton();
+        jBtnEliminar = new javax.swing.JButton();
+        jBtnCancelar = new javax.swing.JButton();
+        jBtnIrACrear = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Lector de Gestion de Vaciones");
 
         jLabel1.setText("Empleado:");
 
-        jTextField1.setText("jTextField1");
+        jBtnBuscar.setText("Buscar");
+        jBtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnBuscarActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Buscar");
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
@@ -51,7 +69,35 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
                 "VacacioneID", "EmpleadoID", "Nombre", "Apellido", "Cargo", "Salario", "FechaInicio", "FechaFin", "Motivo"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollEmpleado.setViewportView(jTableEmpleados);
+
+        jBtnEditar.setText("Editar");
+        jBtnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEditarActionPerformed(evt);
+            }
+        });
+
+        jBtnEliminar.setText("Eliminar");
+        jBtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEliminarActionPerformed(evt);
+            }
+        });
+
+        jBtnCancelar.setText("Cancelar");
+        jBtnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnCancelarActionPerformed(evt);
+            }
+        });
+
+        jBtnIrACrear.setText("Ir A Crear");
+        jBtnIrACrear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnIrACrearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -60,13 +106,23 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+                    .addComponent(jScrollEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, 683, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jBtnEditar)
+                                .addGap(81, 81, 81)
+                                .addComponent(jBtnEliminar)
+                                .addGap(83, 83, 83)
+                                .addComponent(jBtnCancelar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnBuscar)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnIrACrear)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -76,56 +132,114 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(jTxtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jBtnBuscar)
+                    .addComponent(jBtnIrACrear))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addComponent(jScrollEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnEditar)
+                    .addComponent(jBtnEliminar)
+                    .addComponent(jBtnCancelar))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void jBtnIrACrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIrACrearActionPerformed
+        // TODO add your handling code here:
+        opcionCRUD = OpcionesCRUD.CREAR;
+        FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, new vacacion());
+        frmVacacionesEsc.setTitle("Crear Vacación");
+        frmVacacionesEsc.setVisible(true);
+    }//GEN-LAST:event_jBtnIrACrearActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrmGestionVacacionesLec().setVisible(true);
-            }
-        });
+
+    private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+
+    }//GEN-LAST:event_jBtnCancelarActionPerformed
+
+    private Vacacion obtenerDatos() {
+        Vacacion vacacion = new Vacacion();
+        int row = jTableVacaciones.getSelectedRow();
+        vacacion.setVacacionID((int) jTableVacaciones.getValueAt(row, 0));
+        vacacion.setFechaInicio((LocalDate) jTableVacaciones.getValueAt(row, 1));
+        vacacion.setFechaFin((LocalDate) jTableVacaciones.getValueAt(row, 2));
+        vacacion.setMotivo(jTableVacaciones.getValueAt(row, 3).toString());
+        
+        Empleado empleado = new Empleado();
+        empleado.setEmpleadoId((int) jTableVacaciones.getValueAt(row, 4));
+        empleado.setNombre(jTableVacaciones.getValueAt(row, 5).toString());
+        vacacion.setEmpleado(empleado);
+        
+        return vacacion;
     }
 
+    private void jBtnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEditarActionPerformed
+        // TODO add your handling code here:
+        int row = jTableVacaciones.getSelectedRow();
+        if (row != -1) {
+            opcionCRUD = OpcionesCRUD.MODIFICAR;
+            FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, obtenerDatos());
+            frmVacacionesEsc.setTitle("Modificar vacación");
+            frmVacacionesEsc.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Seleccionar una fila", "Vacación",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_jBtnEditarActionPerformed
+
+
+    private void jBtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEliminarActionPerformed
+        // TODO add your handling code here:
+         int row = jTableVacaciones.getSelectedRow();
+        if (row != -1) {
+            opcionCRUD = OpcionesCRUD.ELIMINAR;
+            FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, obtenerDatos());
+            frmVacacionesEsc.setTitle("Eliminar vacación");
+            frmVacacionesEsc.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Seleccionar una fila", "Vacación",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_jBtnEliminarActionPerformed
+
+    private void jBtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBuscarActionPerformed
+        // TODO add your handling code here:
+        Empleado empleadoSearch = new Empleado();
+        empleadoSearch.setNombre(jTxtNombreEmpleado.getText());
+        ArrayList<Vacacion> vacaciones = VacacionDAL.buscar(new Vacacion(empleadoSearch));
+        String[] columnas = {"VacacionID", "FechaInicio", "FechaFin", "Motivo", "EmpleadoID", "Nombre Empleado"};
+        Object[][] datos = new Object[vacaciones.size()][6];
+        for (int i = 0; i < vacaciones.size(); i++) {
+            Vacacion vacacion = vacaciones.get(i);
+            datos[i][0] = vacacion.getVacacionID();
+            datos[i][1] = vacacion.getFechaInicio();
+            datos[i][2] = vacacion.getFechaFin();
+            datos[i][3] = vacacion.getMotivo();
+            datos[i][4] = vacacion.getEmpleado().getEmpleadoId();
+            datos[i][5] = vacacion.getEmpleado().getNombre();
+        }
+        DefaultTableModel modelTable = new DefaultTableModel(datos, columnas);
+        jTableVacaciones.setModel(modelTable);
+    }//GEN-LAST:event_jBtnBuscarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jBtnBuscar;
+    private javax.swing.JButton jBtnCancelar;
+    private javax.swing.JButton jBtnEditar;
+    private javax.swing.JButton jBtnEliminar;
+    private javax.swing.JButton jBtnIrACrear;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JScrollPane jScrollEmpleado;
+    private javax.swing.JTable jTableEmpleados;
+    private javax.swing.JTextField jTxtNombre;
     // End of variables declaration//GEN-END:variables
 }

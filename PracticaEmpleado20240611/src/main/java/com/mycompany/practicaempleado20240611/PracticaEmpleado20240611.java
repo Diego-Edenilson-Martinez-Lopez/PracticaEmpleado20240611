@@ -11,6 +11,7 @@ package com.mycompany.practicaempleado20240611;
 public class PracticaEmpleado20240611 {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+       FrmInicio frmInicio = new FrmInicio();
+       frmInicio.setVisible(true);
     }
 }

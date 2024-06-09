@@ -4,17 +4,21 @@
  */
 package com.mycompany.practicaempleado20240611;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 /**
  *
  * @author MINEDUCYT
  */
 public class FrmInicio extends javax.swing.JFrame {
+    
 
     /**
      * Creates new form FrmInicio
      */
     public FrmInicio() {
         initComponents();
+        setExtendedState(FrmInicio.MAXIMIZED_BOTH);
     }
 
     /**
@@ -28,20 +32,30 @@ public class FrmInicio extends javax.swing.JFrame {
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        jMeEmpleados = new javax.swing.JMenuItem();
+        jMeCerrar = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jMenu1.setText("Mantenimiento");
 
-        jMenuItem1.setText("Empleados");
-        jMenu1.add(jMenuItem1);
+        jMeEmpleados.setText("Empleados");
+        jMeEmpleados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMeEmpleadosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMeEmpleados);
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Cerrar");
-        jMenuBar1.add(jMenu2);
+        jMeCerrar.setText("Cerrar");
+        jMeCerrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMeCerrarMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMeCerrar);
 
         setJMenuBar(jMenuBar1);
 
@@ -59,6 +73,19 @@ public class FrmInicio extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jMeCerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMeCerrarMouseClicked
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this,"Se Cerro la Aplicacion","cerrar", JOptionPane.INFORMATION_MESSAGE);
+        this.dispose();
+        System.exit(0);
+    }//GEN-LAST:event_jMeCerrarMouseClicked
+
+    private void jMeEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMeEmpleadosActionPerformed
+        // TODO add your handling code here:
+        FrmGestionVacacionesLec frmGestionVacacionesLec = new FrmGestionVacacionesLec();
+        frmGestionVacacionesLec.setVisible(true);
+    }//GEN-LAST:event_jMeEmpleadosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -96,9 +123,9 @@ public class FrmInicio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMeCerrar;
+    private javax.swing.JMenuItem jMeEmpleados;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     // End of variables declaration//GEN-END:variables
 }
