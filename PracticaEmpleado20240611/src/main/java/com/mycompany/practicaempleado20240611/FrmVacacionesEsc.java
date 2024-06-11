@@ -13,6 +13,8 @@ import accesoadatos.VacacionDAL;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -21,7 +23,6 @@ import javax.swing.JTextField;
  *
  * @author MINEDUCYT
  */
-
 public class FrmVacacionesEsc extends javax.swing.JFrame {
 
     private OpcionesCRUD opcionCRUD;
@@ -31,8 +32,8 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
     /**
      * Creates new form FrmVacacionesEsc
      */
-    public FrmVacacionesEsc(OpcionesCRUD opcion, Vacacion vacacion) {      
-         this.opcionCRUD = opcion;
+    public FrmVacacionesEsc(OpcionesCRUD opcion, Vacacion vacacion) {
+        this.opcionCRUD = opcion;
         initComponents();
         empleados = EmpleadoDAL.obtenerTodos();
 
@@ -41,32 +42,62 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
             vacacionActual = vacacion;
         }
     }
-    
+
     private void asignarDatos(Vacacion vacacion) {
-        jTxtNombre.setText(vacacion.getEmpleado().getNombre());
-        jTextApellido.setText(vacacion.getEmpleado().getApellido());
-        jTxtCargo.setText(vacacion.getEmpleado().getCargo());
-        jTxtSalario.setText(String.valueOf(vacacion.getEmpleado().getSalario()));
-        jComFechaInicio.setSelectedItem(vacacion.getFechaInicio().toString());
-        jComFechaFin.setSelectedItem(vacacion.getFechaFin().toString());
-        jTxtMotivo.setText(vacacion.getMotivo());
+        Empleado empleado = vacacion.getEmpleado();
+    jTxtNombre.setText(empleado.getNombre());
+    jTextApellido.setText(empleado.getApellido());
+    jTxtCargo.setText(empleado.getCargo());
+    jTxtSalario.setText(String.valueOf(empleado.getSalario()));
+    jTextFechaInicio.setText(vacacion.getFechaInicio().format(DateTimeFormatter.ISO_DATE));
+    jTextFechaFin.setText(vacacion.getFechaFin().format(DateTimeFormatter.ISO_DATE));
+    jTxtMotivo.setText(vacacion.getMotivo());
     }
 
     private Vacacion obtenerDatos() {
-        Vacacion vacacion = new Vacacion();
-        Empleado empleado = new Empleado();
-        empleado.setNombre(jTxtNombre.getText());
-        empleado.setApellido(jTextApellido.getText());
-        empleado.setCargo(jTxtCargo.getText());
-        empleado.setSalario(Double.parseDouble(jTxtSalario.getText()));
-        vacacion.setEmpleado(empleado);
-        vacacion.setFechaInicio(LocalDate.parse((String) jComFechaInicio.getSelectedItem()));
-        vacacion.setFechaFin(LocalDate.parse((String) jComFechaFin.getSelectedItem()));
-        vacacion.setMotivo(jTxtMotivo.getText());
-        vacacion.setVacacionID(vacacionActual.getVacacionID());
-        return vacacion;
+       Vacacion vacacion = new Vacacion();
+    
+    Empleado empleado = new Empleado();
+    empleado.setNombre(jTxtNombre.getText());
+    empleado.setApellido(jTextApellido.getText());
+    empleado.setCargo(jTxtCargo.getText());
+    empleado.setSalario(Double.parseDouble(jTxtSalario.getText()));
+    
+    vacacion.setEmpleado(empleado);
+
+   String fechaInicioTexto = jTextFechaInicio.getText().trim();
+    String fechaFinTexto = jTextFechaFin.getText().trim();
+
+    LocalDate fechaInicio = null;
+    LocalDate fechaFin = null;
+
+    if (!fechaInicioTexto.isEmpty()) {
+        if (fechaInicioTexto.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            fechaInicio = LocalDate.parse(fechaInicioTexto, DateTimeFormatter.ISO_DATE);
+            vacacion.setFechaInicio(fechaInicio);
+        } else {
+            // Mostrar mensaje de error al usuario indicando que el formato de fecha es incorrecto
+            JOptionPane.showMessageDialog(this, "El formato de fecha de inicio debe ser YYYY-MM-DD", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
+    if (!fechaFinTexto.isEmpty()) {
+        if (fechaFinTexto.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            fechaFin = LocalDate.parse(fechaFinTexto, DateTimeFormatter.ISO_DATE);
+            vacacion.setFechaFin(fechaFin);
+        } else {
+            // Mostrar mensaje de error al usuario indicando que el formato de fecha es incorrecto
+            JOptionPane.showMessageDialog(this, "El formato de fecha de fin debe ser YYYY-MM-DD", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+
+    vacacion.setMotivo(jTxtMotivo.getText());
+    if (vacacionActual != null) {
+        vacacion.setVacacionID(vacacionActual.getVacacionID());
+    }
+    return vacacion;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -91,8 +122,8 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
         jTxtMotivo = new javax.swing.JTextField();
         jBtnGuardar = new javax.swing.JButton();
         jBtnCancelar = new javax.swing.JButton();
-        jComFechaInicio = new javax.swing.JComboBox<>();
-        jComFechaFin = new javax.swing.JComboBox<>();
+        jTextFechaInicio = new javax.swing.JTextField();
+        jTextFechaFin = new javax.swing.JTextField();
 
         setTitle("Modificador de Gestion de Vaciones");
 
@@ -124,10 +155,6 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
             }
         });
 
-        jComFechaInicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComFechaFin.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,27 +172,22 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
                                 .addComponent(jLabel2)
                                 .addComponent(jLabel1)
                                 .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jTxtMotivo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                                        .addComponent(jTxtNombre)
-                                        .addComponent(jTextApellido)
-                                        .addComponent(jTxtCargo, javax.swing.GroupLayout.Alignment.TRAILING))
-                                    .addComponent(jTxtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(80, 80, 80)
-                                .addComponent(jComFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jComFechaFin, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(204, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jTxtMotivo, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                            .addComponent(jTxtNombre, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextApellido, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTxtCargo)
+                            .addComponent(jTextFechaFin, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                            .addComponent(jTextFechaInicio)
+                            .addComponent(jTxtSalario))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(37, 37, 37)
                 .addComponent(jBtnGuardar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 261, Short.MAX_VALUE)
                 .addComponent(jBtnCancelar)
-                .addGap(152, 152, 152))
+                .addGap(122, 122, 122))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,20 +211,20 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jComFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jComFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jTxtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBtnGuardar)
-                    .addComponent(jBtnCancelar))
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jBtnCancelar)
+                    .addComponent(jBtnGuardar))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         pack();
@@ -219,14 +241,17 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
         if (null != opcionCRUD) {
             switch (opcionCRUD) {
                 case CREAR:
+                    crearVacacion();
                     JOptionPane.showMessageDialog(this, "Se Añadio el Registro", "Crear", JOptionPane.INFORMATION_MESSAGE);
                     this.setVisible(false);
                     break;
                 case MODIFICAR:
+                    modificarVacacion();
                     JOptionPane.showMessageDialog(this, "Se Modifico El Registro", "Modificar", JOptionPane.INFORMATION_MESSAGE);
                     this.setVisible(false);
                     break;
                 case ELIMINAR:
+                    eliminarVacacion();
                     JOptionPane.showMessageDialog(this, "Se Elimino el Registro", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
                     this.setVisible(false);
                     break;
@@ -234,9 +259,10 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
                     break;
             }
         }
-    }  
+    }
+
     private void crearVacacion() {
-        try {
+       try {
             Vacacion vacacion = obtenerDatos();
             int result = VacacionDAL.crear(vacacion);
             if (result > 0) {
@@ -250,30 +276,31 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
-                    ex.getMessage(), "ERROR VACACIÓN",
+                    ex.getMessage(), "ERROR",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    
     private void modificarVacacion() {
-        try {
-            Vacacion vacacion = obtenerDatos();
-            int result = VacacionDAL.modificar(vacacion);
-            if (result > 0) {
-                JOptionPane.showMessageDialog(this,
-                        "La vacación fue modificada exitosamente", "MODIFICAR VACACIÓN",
-                        JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "Ocurrió un error al modificar la vacación", "ERROR VACACIÓN",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
+    try {
+        Vacacion vacacion = obtenerDatos();
+        int result = VacacionDAL.modificar(vacacion);
+        if (result > 0) {
             JOptionPane.showMessageDialog(this,
-                    ex.getMessage(), "ERROR VACACIÓN",
+                    "La vacación fue modificada exitosamente", "MODIFICAR VACACIÓN",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Ocurrió un error al modificar la vacación", "ERROR VACACIÓN",
                     JOptionPane.ERROR_MESSAGE);
         }
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this,
+                ex.getMessage(), "ERROR VACACIÓN",
+                JOptionPane.ERROR_MESSAGE);
     }
+}
+
 
     private void eliminarVacacion() {
         try {
@@ -302,8 +329,6 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnCancelar;
     private javax.swing.JButton jBtnGuardar;
-    private javax.swing.JComboBox<String> jComFechaFin;
-    private javax.swing.JComboBox<String> jComFechaInicio;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -312,6 +337,8 @@ public class FrmVacacionesEsc extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JTextField jTextApellido;
+    private javax.swing.JTextField jTextFechaFin;
+    private javax.swing.JTextField jTextFechaInicio;
     private javax.swing.JTextField jTxtCargo;
     private javax.swing.JTextField jTxtMotivo;
     private javax.swing.JTextField jTxtNombre;

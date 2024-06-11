@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.awt.List;
 
 /**
  *
@@ -39,9 +40,9 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jTxtNombre = new javax.swing.JTextField();
-        jBtnBuscar = new javax.swing.JButton();
         jScrollEmpleado = new javax.swing.JScrollPane();
         jTableEmpleados = new javax.swing.JTable();
+        jBtnBuscar = new javax.swing.JButton();
         jBtnEditar = new javax.swing.JButton();
         jBtnEliminar = new javax.swing.JButton();
         jBtnCancelar = new javax.swing.JButton();
@@ -50,13 +51,6 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
         setTitle("Lector de Gestion de Vaciones");
 
         jLabel1.setText("Empleado:");
-
-        jBtnBuscar.setText("Buscar");
-        jBtnBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnBuscarActionPerformed(evt);
-            }
-        });
 
         jTableEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -70,6 +64,13 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
             }
         ));
         jScrollEmpleado.setViewportView(jTableEmpleados);
+
+        jBtnBuscar.setText("Buscar");
+        jBtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnBuscarActionPerformed(evt);
+            }
+        });
 
         jBtnEditar.setText("Editar");
         jBtnEditar.addActionListener(new java.awt.event.ActionListener() {
@@ -152,7 +153,7 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
     private void jBtnIrACrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnIrACrearActionPerformed
         // TODO add your handling code here:
         opcionCRUD = OpcionesCRUD.CREAR;
-        FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, new vacacion());
+        FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, new Vacacion());
         frmVacacionesEsc.setTitle("Crear Vacación");
         frmVacacionesEsc.setVisible(true);
     }//GEN-LAST:event_jBtnIrACrearActionPerformed
@@ -166,23 +167,23 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
 
     private Vacacion obtenerDatos() {
         Vacacion vacacion = new Vacacion();
-        int row = jTableVacaciones.getSelectedRow();
-        vacacion.setVacacionID((int) jTableVacaciones.getValueAt(row, 0));
-        vacacion.setFechaInicio((LocalDate) jTableVacaciones.getValueAt(row, 1));
-        vacacion.setFechaFin((LocalDate) jTableVacaciones.getValueAt(row, 2));
-        vacacion.setMotivo(jTableVacaciones.getValueAt(row, 3).toString());
-        
+        int row = jTableEmpleados.getSelectedRow();
+        vacacion.setVacacionID((int) jTableEmpleados.getValueAt(row, 0));
+        vacacion.setFechaInicio((LocalDate) jTableEmpleados.getValueAt(row, 1));
+        vacacion.setFechaFin((LocalDate) jTableEmpleados.getValueAt(row, 2));
+        vacacion.setMotivo(jTableEmpleados.getValueAt(row, 3).toString());
+
         Empleado empleado = new Empleado();
-        empleado.setEmpleadoId((int) jTableVacaciones.getValueAt(row, 4));
-        empleado.setNombre(jTableVacaciones.getValueAt(row, 5).toString());
+        empleado.setEmpleadoId((int) jTableEmpleados.getValueAt(row, 4));
+        empleado.setNombre(jTableEmpleados.getValueAt(row, 5).toString());
         vacacion.setEmpleado(empleado);
-        
+
         return vacacion;
     }
 
     private void jBtnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEditarActionPerformed
         // TODO add your handling code here:
-        int row = jTableVacaciones.getSelectedRow();
+        int row = jTableEmpleados.getSelectedRow();
         if (row != -1) {
             opcionCRUD = OpcionesCRUD.MODIFICAR;
             FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, obtenerDatos());
@@ -198,7 +199,7 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
 
     private void jBtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEliminarActionPerformed
         // TODO add your handling code here:
-         int row = jTableVacaciones.getSelectedRow();
+        int row = jTableEmpleados.getSelectedRow();
         if (row != -1) {
             opcionCRUD = OpcionesCRUD.ELIMINAR;
             FrmVacacionesEsc frmVacacionesEsc = new FrmVacacionesEsc(opcionCRUD, obtenerDatos());
@@ -214,7 +215,7 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
     private void jBtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBuscarActionPerformed
         // TODO add your handling code here:
         Empleado empleadoSearch = new Empleado();
-        empleadoSearch.setNombre(jTxtNombreEmpleado.getText());
+        empleadoSearch.setNombre(jTxtNombre.getText());
         ArrayList<Vacacion> vacaciones = VacacionDAL.buscar(new Vacacion(empleadoSearch));
         String[] columnas = {"VacacionID", "FechaInicio", "FechaFin", "Motivo", "EmpleadoID", "Nombre Empleado"};
         Object[][] datos = new Object[vacaciones.size()][6];
@@ -228,9 +229,43 @@ public class FrmGestionVacacionesLec extends javax.swing.JFrame {
             datos[i][5] = vacacion.getEmpleado().getNombre();
         }
         DefaultTableModel modelTable = new DefaultTableModel(datos, columnas);
-        jTableVacaciones.setModel(modelTable);
+        jTableEmpleados.setModel(modelTable);
     }//GEN-LAST:event_jBtnBuscarActionPerformed
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(FrmGestionVacacionesLec.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new FrmGestionVacacionesLec().setVisible(true);
+            }
+        });
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnBuscar;
     private javax.swing.JButton jBtnCancelar;

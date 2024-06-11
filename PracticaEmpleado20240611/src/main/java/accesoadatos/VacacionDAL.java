@@ -12,6 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.awt.List;
+import java.sql.Statement;
+
 
 /**
  *
@@ -19,15 +22,23 @@ import java.util.ArrayList;
  */
 public class VacacionDAL {
     
-      public static int crear(Vacacion vacacion) {
+    public static int crear(Vacacion vacacion) {
         try (Connection conn = ComunDB.obtenerConexion()) {
-            String sql = "INSERT INTO Vacaciones (FechaInicio, FechaFin, Motivo, EmpleadoID) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setDate(1, Date.valueOf(vacacion.getFechaInicio()));
-                statement.setDate(2, Date.valueOf(vacacion.getFechaFin()));
-                statement.setString(3, vacacion.getMotivo());
-                statement.setInt(4, vacacion.getEmpleado().getEmpleadoId());
+            String sql = "INSERT INTO Vacaciones (EmpleadoID, FechaInicio, FechaFin, Motivo) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, vacacion.getEmpleado().getEmpleadoId());
+                statement.setDate(2, java.sql.Date.valueOf(vacacion.getFechaInicio()));
+                statement.setDate(3, java.sql.Date.valueOf(vacacion.getFechaFin()));
+                statement.setString(4, vacacion.getMotivo());
                 int rowsAffected = statement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    ResultSet generatedKeys = statement.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        vacacion.setVacacionID(generatedKeys.getInt(1));
+                    }
+                }
+
                 return rowsAffected;
             } catch (SQLException e) {
                 throw new RuntimeException("Error al crear la vacacion", e);
@@ -41,8 +52,8 @@ public class VacacionDAL {
         try (Connection conn = ComunDB.obtenerConexion()) {
             String sql = "UPDATE Vacaciones SET FechaInicio=?, FechaFin=?, Motivo=?, EmpleadoID=? WHERE VacacionID=?";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setDate(1, Date.valueOf(vacacion.getFechaInicio()));
-                statement.setDate(2, Date.valueOf(vacacion.getFechaFin()));
+                statement.setDate(1, java.sql.Date.valueOf(vacacion.getFechaInicio()));
+                statement.setDate(2, java.sql.Date.valueOf(vacacion.getFechaFin()));
                 statement.setString(3, vacacion.getMotivo());
                 statement.setInt(4, vacacion.getEmpleado().getEmpleadoId());
                 statement.setInt(5, vacacion.getVacacionID());
@@ -74,10 +85,10 @@ public class VacacionDAL {
     public static ArrayList<Vacacion> buscar(Vacacion vacacionSearch) {
         ArrayList<Vacacion> vacaciones = new ArrayList<>();
         try (Connection conn = ComunDB.obtenerConexion()) {
-            String sql = "SELECT v.VacacionID, v.FechaInicio, v.FechaFin, v.Motivo, e.EmpleadoID, e.Nombre, e.Apellido, e.Cargo, e.Salario " +
-                         "FROM Vacaciones v " +
-                         "INNER JOIN Empleados e ON v.EmpleadoID = e.EmpleadoID " +
-                         "WHERE e.Nombre LIKE ?";
+            String sql = "SELECT v.VacacionID, v.FechaInicio, v.FechaFin, v.Motivo, e.EmpleadoID, e.Nombre, e.Apellido, e.Cargo, e.Salario "
+                    + "FROM Vacaciones v "
+                    + "INNER JOIN Empleados e ON v.EmpleadoID = e.EmpleadoID "
+                    + "WHERE e.Nombre LIKE ?";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, "%" + vacacionSearch.getEmpleado().getNombre() + "%");
                 try (ResultSet resultSet = statement.executeQuery()) {
@@ -87,7 +98,7 @@ public class VacacionDAL {
                         vacacion.setFechaInicio(resultSet.getDate("FechaInicio").toLocalDate());
                         vacacion.setFechaFin(resultSet.getDate("FechaFin").toLocalDate());
                         vacacion.setMotivo(resultSet.getString("Motivo"));
-                        
+
                         Empleado empleado = new Empleado();
                         empleado.setEmpleadoId(resultSet.getInt("EmpleadoID"));
                         empleado.setNombre(resultSet.getString("Nombre"));
@@ -108,3 +119,4 @@ public class VacacionDAL {
         return vacaciones;
     }
 }
+

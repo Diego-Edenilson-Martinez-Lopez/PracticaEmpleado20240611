@@ -11,53 +11,24 @@ import java.time.LocalDate;
  * @author MINEDUCYT
  */
 public class Vacacion {
-   private int VacacionID;
-   private LocalDate FechaInicio;
-   private LocalDate FechaFin;
-   private String Motivo;
-   private Empleado empleado;
+
+    private int vacacionID;
+    private int empleadoID;
+    private Empleado empleado;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private String motivo;
 
     public Vacacion() {
     }
 
-    public Vacacion(int VacacionID, LocalDate FechaInicio, LocalDate FechaFin, String Motivo, Empleado empleado) {
-        this.VacacionID = VacacionID;
-        this.FechaInicio = FechaInicio;
-        this.FechaFin = FechaFin;
-        this.Motivo = Motivo;
-        this.empleado = empleado;
-    }
-
-    public int getVacacionID() {
-        return VacacionID;
-    }
-
-    public void setVacacionID(int VacacionID) {
-        this.VacacionID = VacacionID;
-    }
-
-    public LocalDate getFechaInicio() {
-        return FechaInicio;
-    }
-
-    public void setFechaInicio(LocalDate FechaInicio) {
-        this.FechaInicio = FechaInicio;
-    }
-
-    public LocalDate getFechaFin() {
-        return FechaFin;
-    }
-
-    public void setFechaFin(LocalDate FechaFin) {
-        this.FechaFin = FechaFin;
-    }
-
-    public String getMotivo() {
-        return Motivo;
-    }
-
-    public void setMotivo(String Motivo) {
-        this.Motivo = Motivo;
+    public Vacacion(int vacacionID, int empleadoID,  LocalDate fechaInicio, LocalDate fechaFin, String motivo) {
+        this.vacacionID = vacacionID;
+        this.empleadoID = empleadoID;
+        this.fechaInicio = fechaInicio;        
+        this.fechaFin = fechaFin;
+        this.motivo = motivo;
+       
     }
 
     public Empleado getEmpleado() {
@@ -67,6 +38,49 @@ public class Vacacion {
     public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
     }
-   
-           
+
+    public Vacacion(Empleado empleado) {
+        this.empleado = empleado;
+    }
+
+    public int getVacacionID() {
+        return vacacionID;
+    }
+
+    public void setVacacionID(int vacacionID) {
+        this.vacacionID = vacacionID;
+    }
+
+    public int getEmpleadoID() {
+        return empleadoID;
+    }
+
+    public void setEmpleadoID(int empleadoID) {
+        this.empleadoID = empleadoID;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
 }
