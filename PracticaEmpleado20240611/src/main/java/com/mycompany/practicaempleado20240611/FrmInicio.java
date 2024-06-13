@@ -32,6 +32,7 @@ public class FrmInicio extends javax.swing.JFrame {
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMEmpleado0 = new javax.swing.JMenuItem();
         jMeEmpleados = new javax.swing.JMenuItem();
         jMeCerrar = new javax.swing.JMenu();
 
@@ -39,7 +40,15 @@ public class FrmInicio extends javax.swing.JFrame {
 
         jMenu1.setText("Mantenimiento");
 
-        jMeEmpleados.setText("Empleados");
+        jMEmpleado0.setText("Empleado");
+        jMEmpleado0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMEmpleado0ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMEmpleado0);
+
+        jMeEmpleados.setText("Vacacion");
         jMeEmpleados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMeEmpleadosActionPerformed(evt);
@@ -74,6 +83,11 @@ public class FrmInicio extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jMeEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMeEmpleadosActionPerformed
+       FrmGestionVacacionesLec frmGestionVacacionesLec = new FrmGestionVacacionesLec();
+        frmGestionVacacionesLec.setVisible(true);
+    }//GEN-LAST:event_jMeEmpleadosActionPerformed
+
     private void jMeCerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMeCerrarMouseClicked
         // TODO add your handling code here:
         JOptionPane.showMessageDialog(this,"Se Cerro la Aplicacion","cerrar", JOptionPane.INFORMATION_MESSAGE);
@@ -81,11 +95,11 @@ public class FrmInicio extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_jMeCerrarMouseClicked
 
-    private void jMeEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMeEmpleadosActionPerformed
+    private void jMEmpleado0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMEmpleado0ActionPerformed
         // TODO add your handling code here:
-        FrmGestionVacacionesLec frmGestionVacacionesLec = new FrmGestionVacacionesLec();
-        frmGestionVacacionesLec.setVisible(true);
-    }//GEN-LAST:event_jMeEmpleadosActionPerformed
+        FrmEmpleadoLec frmEmpleadoLec = new FrmEmpleadoLec();
+        frmEmpleadoLec.setVisible(true);
+    }//GEN-LAST:event_jMEmpleado0ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -123,6 +137,7 @@ public class FrmInicio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem jMEmpleado0;
     private javax.swing.JMenu jMeCerrar;
     private javax.swing.JMenuItem jMeEmpleados;
     private javax.swing.JMenu jMenu1;

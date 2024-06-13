@@ -12,7 +12,7 @@ import java.time.LocalDate;
  */
 public class Vacacion {
 
-    private int vacacionID;
+  private int vacacionID;
     private int empleadoID;
     private Empleado empleado;
     private LocalDate fechaInicio;
@@ -22,9 +22,10 @@ public class Vacacion {
     public Vacacion() {
     }
 
-    public Vacacion(int vacacionID, int empleadoID,  LocalDate fechaInicio, LocalDate fechaFin, String motivo) {
+    public Vacacion(int vacacionID, int empleadoID, Empleado empleado , LocalDate fechaInicio, LocalDate fechaFin, String motivo) {
         this.vacacionID = vacacionID;
         this.empleadoID = empleadoID;
+         this.empleado = empleado;
         this.fechaInicio = fechaInicio;        
         this.fechaFin = fechaFin;
         this.motivo = motivo;
@@ -82,5 +83,4 @@ public class Vacacion {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
-
 }

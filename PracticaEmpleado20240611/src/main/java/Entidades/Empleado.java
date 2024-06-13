@@ -66,5 +66,10 @@ public class Empleado {
     public void setSalario(double Salario) {
         this.Salario = Salario;
     }
+
+    @Override
+    public String toString() {
+        return Nombre+" "+Apellido; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
     
 }
